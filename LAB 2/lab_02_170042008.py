@@ -33,7 +33,6 @@ x=Symbol('x')
 eq=np.e**x+x**2+3*x+2
 print(eq)
 eq1=lambdify(x,eq)
-print(eq1(-1.7874157307991467))
 
 def bisection__(f,xl, xu, maxIter=20, threshold=0.2):
   array_of_values=[]
@@ -43,7 +42,6 @@ def bisection__(f,xl, xu, maxIter=20, threshold=0.2):
     value1=f(xl)
     value2=f(xu)
     xm=(xl+xu)/2
-    #print(i,xm,value1,value2,xl,xu)
     array_of_values.append(xm)
     if (value1*f(xm)<0):
       xu=xm
@@ -51,10 +49,6 @@ def bisection__(f,xl, xu, maxIter=20, threshold=0.2):
       xl=xm
     elif(value1*f(xm)==0):
       break
-    #error=(abs(xm-array_of_values[i-1])/xm)
-    #array_of_approximations.append(error)
-
-  #return array_of_approximations
   return array_of_values
 
 # xl: lower bound of approximation
@@ -63,16 +57,12 @@ def bisection__(f,xl, xu, maxIter=20, threshold=0.2):
 # threshold: threshold of error in percentage
 # array_of_approximations: list of all approximation over 50 iterations
 
-print(eq)
-print(bisection__(eq1,-10,1))
-
 """### Task 02 : Newton Raphson Method ###
 In this task you have to implement the body of the function` newton__().` For more about the bisection method please visit [lecture note on newton raphson method](https://nm.mathforcollege.com/mws/gen/03nle/mws_gen_nle_txt_newton.pdf)
 """
 
 def newton__(fx,x0, maxIter=20, threshold=0.2):
   approx_values=[]
-  array_of_approximations=[]
   Fx=lambdify(x,fx)
 
   fxPrime=fx.diff(x)
@@ -90,9 +80,6 @@ def newton__(fx,x0, maxIter=20, threshold=0.2):
 # maxIter: maximum number of iterations
 # threshold: threshold of error in percentage
 # array_of_approximations: list of all approximation over 50 iterations
-
-print(eq)
-print(newton__(eq,0))
 
 """### Task 03 : False Position Method ###
 In this task you have to implement the body of the function `falsePosition__().` For more about the  method please visit [lecture note on false position method](https://nm.mathforcollege.com/mws/gen/03nle/mws_gen_nle_ppt_falseposition.pdf)
@@ -118,9 +105,6 @@ def falsePosition__(fx, xl, xu, maxIter=20, threshold=0.2):
 # threshold: threshold of error in percentage
 # array_of_approximations: list of all approximation over 50 iterations
 
-#print(eq(0))
-print(falsePosition__(eq1, 0,1))
-
 """### Task 04 : Secant Method ###
 In this task you have to implement the body of the function `secant__()`. For more about the  method please visit [lecture note on secant method](https://nm.mathforcollege.com/mws/gen/03nle/mws_gen_nle_ppt_secant.pdf)
 """
@@ -134,8 +118,6 @@ def secant__(fx, x0, maxIter=20, threshold=0.2):
     value2=fx(x1)
     if(value1*value2==0):
       break
-   # print(i,value1,x0,x1)
-  #E  print(i,value2,x0,x1)
     x2=x0-((value1*(x0-x1))/(value1-value2))
     x0=x2
     array_of_values.append(x0)
@@ -146,10 +128,6 @@ def secant__(fx, x0, maxIter=20, threshold=0.2):
 # threshold: threshold of error in percentage
 # array_of_approximations: list of all approximation over 50 iterations
 
-#print(eq1(0)-eq1(-1))
-#print(eq1(0))
-print(secant__(eq1, 0))
-
 """### Task 05 : Calculate the relative approximate error ###
 Implement the function `calc_error()` which takes a list of assumption as a list and returns a list of relative approximate values.
 """
@@ -158,7 +136,7 @@ def calc_error(assumptions):
   rel_approx_errors=[]
   length=len(assumptions)
   for i in range(0,length-1):
-    error=abs(assumptions[i+1]-assumptions[i])/assumptions[i+1]
+    error=abs((assumptions[i+1]-assumptions[i])/assumptions[i+1])
     rel_error=error*100
     rel_approx_errors.append(rel_error)
   return rel_approx_errors
@@ -176,11 +154,29 @@ Plot all the errors from the previous four methods in one graph to compare their
 """
 
 bisection__error=calc_error(bisection__(eq1,-9,1))
-#newton_error=calc_error(newton__(eq,0))
-#falsePosition_error=calc_error(falsePosition__(eq1,0,1))
-#secant_error=calc_error(secant__(eq1,0))
-print(len(bisection__error))
-bisection_len=np.linspace(0,20)
+bisection=np.linspace(0,len(bisection__error),len(bisection__error))
+B_M=np.array(bisection)
 
-plt.plot(np.array(bisection_len),np.array(bisection__error),'r')
-plt.show()
+newton_error=calc_error(newton__(eq,0))
+newton=np.linspace(0,len(newton_error),len(newton_error))
+NWT=np.array(newton)
+
+falsePosition_error=calc_error(falsePosition__(eq1,0,1))
+false_pos=np.linspace(0,len(falsePosition_error),len(falsePosition_error))
+fp=np.array(false_pos)
+
+secant_error=calc_error(secant__(eq1,0))
+Sec=np.linspace(0,len(secant_error),len(secant_error))
+SC=np.array(Sec)
+
+plt.plot(br,bisection__error,'-ro')
+plt.plot(NWT,newton_error,'-bo')
+plt.plot(fp,falsePosition_error,'-go')
+plt.plot(SC,secant_error,'-co')
+
+plt.legend(('Bisection Method','Newton Method','False Position Method','Secant Method'))
+plt.show
+
+"""### **Observation:**
+After plotting the error approximation we can see that the error approximations of all the methods graduallu becomes zero. The initail error in Bisection, Newton and Secant method is high because of the initially guessed value. But eventually it becomes almost zero. Among the four methods Secant method takes least iterations to find the root. The rest of the methods took more iterations to find it.
+"""
